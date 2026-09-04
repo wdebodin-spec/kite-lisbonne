@@ -188,7 +188,7 @@ def build_dashboard_html(labels, per_spot, any_fetch_ok):
           <header class="spot-head">
             <h3>{htmlmod.escape(spot["name"])}</h3>
             <div class="spot-meta">
-              <span class="drive-time">🚗 {spot["drive"]} depuis Jardim da Estrela</span>
+              <span class="drive-time">🚗 {spot["drive"]}</span>
               <a class="wg-link" href="https://www.windguru.cz/{spot["sc"]}" target="_blank" rel="noopener">windguru.cz/{spot["sc"]} ↗</a>
             </div>
           </header>
