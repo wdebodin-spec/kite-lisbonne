@@ -2,6 +2,8 @@ import re, urllib.request, datetime, html as htmlmod, os
 
 KITE_12M = (15, 20)
 KITE_9M = (17, 30)
+DAY_START = 8
+DAY_END = 18
 
 SPOTS = [
     (31, "Guincho"),
@@ -140,7 +142,8 @@ def collect():
             data = parse(fetch(sc))
             any_fetch_ok = True
             for idx in range(3):
-                per_day_data.append([d for d in data if d["day_index"] == idx and d["speed"] is not None])
+                per_day_data.append([d for d in data if d["day_index"] == idx and d["speed"] is not None
+                                      and DAY_START <= d["hour"] <= DAY_END])
         except Exception:
             per_day_data = [[], [], []]
         per_day_windows = [windows_for_day(dd) if dd else [] for dd in per_day_data]
