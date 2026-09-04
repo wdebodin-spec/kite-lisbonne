@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kite Lisbonne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#eef2f1; --surface:#ffffff; --surface-2:#f4f7f6; --ink:#16232b; --muted:#56676c; --border:#d7e0de;
+  --accent:#a9791f; --accent-ink:#7c5814;
+  --k-none:#aeb8b6; --k-12:#2f6f9e; --k-mix:#8a5fbf; --k-9:#d9622c; --k-danger:#c23b3b;
+  --k-none-bg:#eef1f0; --k-12-bg:#e4eef6; --k-mix-bg:#efe8f8; --k-9-bg:#fbe7db; --k-danger-bg:#f9e0df;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0c1416; --surface:#121c1e; --surface-2:#16211f; --ink:#e7edec; --muted:#9fb0ae; --border:#233130;
+    --accent:#d1a24a; --accent-ink:#e4bb6c;
+    --k-none:#647573; --k-12:#5b9bd0; --k-mix:#a883dd; --k-9:#ef8f52; --k-danger:#e2685f;
+    --k-none-bg:#1a2523; --k-12-bg:#16262e; --k-mix-bg:#211a2c; --k-9-bg:#2a1d14; --k-danger-bg:#2a1717;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,sans-serif;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+h1,h2,h3{font-family:"Big Shoulders Display",system-ui,sans-serif;font-weight:800;letter-spacing:.01em;
+  text-wrap:balance;margin:0}
+
+/* --- gate --- */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;
+  z-index:100;padding:1.5rem}
+#gate.hidden{display:none}
+.gate-card{background:var(--surface);border:1px solid var(--border);border-radius:.9rem;
+  padding:2.2rem 2rem;max-width:340px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.gate-card .eyebrow{display:block;margin-bottom:.3rem}
+.gate-card h1{font-size:1.9rem;margin-bottom:1.4rem}
+.gate-card h1 em{font-style:normal;color:var(--accent)}
+#gate-input{width:100%;font-family:"IBM Plex Mono",monospace;font-size:1rem;padding:.7rem .8rem;
+  border:1px solid var(--border);border-radius:.5rem;background:var(--surface-2);color:var(--ink);
+  text-align:center;letter-spacing:.03em}
+#gate-input:focus{outline:2px solid var(--accent);outline-offset:1px}
+#gate-submit{margin-top:.8rem;width:100%;font-family:"Source Sans 3",sans-serif;font-weight:600;font-size:.95rem;
+  padding:.7rem .8rem;border:none;border-radius:.5rem;background:var(--accent);color:#fff;cursor:pointer}
+#gate-submit:hover{background:var(--accent-ink)}
+#gate-error{margin-top:.8rem;font-size:.85rem;color:var(--k-danger);min-height:1.2em}
+#content{display:none}
+#content.visible{display:block}
+
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent-ink);margin:0 0 .4rem}
+.wrap{max-width:1120px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+header.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;
+  border-bottom:2px solid var(--border);padding-bottom:1.4rem;margin-bottom:2rem}
+h1{font-size:clamp(1.9rem,4vw,2.6rem);color:var(--ink)}
+h1 em{font-style:normal;color:var(--accent)}
+.profile{display:flex;gap:.5rem;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:.82rem}
+.profile span{background:var(--surface-2);border:1px solid var(--border);border-radius:999px;
+  padding:.3rem .75rem;color:var(--muted)}
+.meta-right{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted)}
+section{margin-bottom:2.6rem}
+h2{font-size:1.4rem;margin-bottom:.9rem}
+.warn{background:var(--k-danger-bg);color:var(--k-danger);border:1px solid var(--k-danger);
+  border-radius:.5rem;padding:.6rem .9rem;font-size:.9rem}
+.muted{color:var(--muted)}
+
+.chips{display:flex;flex-wrap:wrap;gap:.9rem}
+.chip{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--k-none);
+  border-radius:.6rem;padding:.85rem 1rem;min-width:220px;flex:1 1 240px;max-width:300px}
+.chip[data-state="k9"]{border-left-color:var(--k-9)}
+.chip[data-state="k12"]{border-left-color:var(--k-12)}
+.chip[data-state="mix"]{border-left-color:var(--k-mix)}
+.chip-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.chip-day{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.04em}
+.chip-spot{font-weight:700;font-size:1.02rem;margin-bottom:.3rem}
+.chip-meta{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted);
+  font-variant-numeric:tabular-nums}
+
+.pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:.72rem;font-weight:600;
+  padding:.18rem .55rem;border-radius:999px;background:var(--k-none-bg);color:var(--k-none);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill[data-state="k12"]{background:var(--k-12-bg);color:var(--k-12)}
+.pill[data-state="k9"]{background:var(--k-9-bg);color:var(--k-9)}
+.pill[data-state="mix"]{background:var(--k-mix-bg);color:var(--k-mix)}
+.pill[data-state="danger"]{background:var(--k-danger-bg);color:var(--k-danger)}
+
+.spot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.3rem}
+.spot-card{background:var(--surface);border:1px solid var(--border);border-radius:.75rem;padding:1.2rem 1.3rem 1.4rem}
+.spot-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.9rem;gap:.6rem}
+.spot-head h3{font-size:1.25rem}
+.wg-link{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--accent-ink);text-decoration:none;
+  white-space:nowrap}
+.wg-link:hover{text-decoration:underline}
+.dayrow{padding:.6rem 0;border-top:1px solid var(--border)}
+.dayrow:first-of-type{border-top:none}
+.daylabel{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.04em;margin-bottom:.35rem}
+.ribbon{display:flex;align-items:flex-end;gap:2px;height:44px;background:var(--surface-2);border-radius:.3rem;
+  padding:.25rem .3rem;margin-bottom:.45rem}
+.ribbon-empty{font-size:.8rem;color:var(--muted);padding:.4rem 0}
+.bar{flex:1 1 0;min-width:2px;border-radius:1px;background:var(--k-none)}
+.bar[data-state="k12"]{background:var(--k-12)}
+.bar[data-state="k9"]{background:var(--k-9)}
+.bar[data-state="mix"]{background:var(--k-mix)}
+.bar[data-state="danger"]{background:var(--k-danger)}
+.pills{display:flex;flex-wrap:wrap;gap:.35rem}
+
+.legend{display:flex;flex-wrap:wrap;gap:1.1rem;align-items:center;font-size:.85rem;color:var(--muted)}
+.legend .pill{margin-right:.35rem}
+
+footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--border);
+  font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted)}
+footer a{color:var(--accent-ink)}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <span class="eyebrow">Accès privé</span>
+    <h1>Kite <em>Lisbonne</em></h1>
+    <input id="gate-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code d'accès" />
+    <button id="gate-submit">Entrer</button>
+    <div id="gate-error"></div>
+  </div>
+</div>
+
+<div id="content">
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Prévision vent · 5 spots</p>
+      <h1>Kite <em>Lisbonne</em></h1>
+      <div class="profile" style="margin-top:.7rem">
+        <span>William · 90kg</span><span>kites 12m / 9m</span><span>fenêtre J0→J+2</span>
+      </div>
+    </div>
+    <div class="meta-right">
+      Généré le 04/09/2026 à 05:34 UTC<br>Rafraîchi tous les 3 jours (GitHub Actions)
+    </div>
+  </header>
+
+  
+
+  <section>
+    <h2>Meilleures fenêtres</h2>
+    <div class="chips">
+      
+          <div class="chip" data-state="k12">
+            <div class="chip-top"><span class="chip-day">Dimanche 06/09</span><span class="pill" data-state="k12">12m</span></div>
+            <div class="chip-spot">Guincho</div>
+            <div class="chip-meta">16h–22h &nbsp;·&nbsp; 15–16kt &nbsp;·&nbsp; raf. 26kt &nbsp;·&nbsp; N</div>
+          </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Détail par spot</h2>
+    <div class="spot-grid">
+      
+        <article class="spot-card">
+          <header class="spot-head">
+            <h3>Guincho</h3>
+            <a class="wg-link" href="https://www.windguru.cz/31" target="_blank" rel="noopener">windguru.cz/31 ↗</a>
+          </header>
+          
+            <div class="dayrow">
+              <div class="daylabel">Aujourd'hui 04/09</div>
+              <div class="ribbon"><div class="bar" style="height:14%" data-state="none" title="3h · 5kt (raf. 5kt) SSW"></div><div class="bar" style="height:37%" data-state="none" title="4h · 13kt (raf. 17kt) NNW"></div><div class="bar" style="height:29%" data-state="none" title="5h · 10kt (raf. 12kt) NNE"></div><div class="bar" style="height:31%" data-state="none" title="6h · 11kt (raf. 10kt) W"></div><div class="bar" style="height:34%" data-state="none" title="7h · 12kt (raf. 14kt) NW"></div><div class="bar" style="height:29%" data-state="none" title="8h · 10kt (raf. 11kt) NNE"></div><div class="bar" style="height:20%" data-state="none" title="9h · 7kt (raf. 8kt) NE"></div><div class="bar" style="height:4%" data-state="none" title="10h · 1kt (raf. 2kt) NE"></div><div class="bar" style="height:11%" data-state="none" title="11h · 4kt (raf. 5kt) NW"></div><div class="bar" style="height:17%" data-state="none" title="12h · 6kt (raf. 8kt) NNW"></div><div class="bar" style="height:6%" data-state="none" title="13h · 2kt (raf. 3kt) NNW"></div><div class="bar" style="height:9%" data-state="none" title="14h · 3kt (raf. 4kt) NNW"></div><div class="bar" style="height:20%" data-state="none" title="15h · 7kt (raf. 10kt) WSW"></div><div class="bar" style="height:26%" data-state="none" title="16h · 9kt (raf. 16kt) WSW"></div><div class="bar" style="height:20%" data-state="none" title="17h · 7kt (raf. 9kt) W"></div><div class="bar" style="height:14%" data-state="none" title="18h · 5kt (raf. 7kt) NNE"></div><div class="bar" style="height:26%" data-state="none" title="19h · 9kt (raf. 10kt) NE"></div><div class="bar" style="height:29%" data-state="none" title="20h · 10kt (raf. 10kt) NNE"></div><div class="bar" style="height:26%" data-state="none" title="21h · 9kt (raf. 9kt) NE"></div><div class="bar" style="height:17%" data-state="none" title="22h · 6kt (raf. 6kt) NE"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Demain 05/09</div>
+              <div class="ribbon"><div class="bar" style="height:20%" data-state="none" title="3h · 7kt (raf. 7kt) NNW"></div><div class="bar" style="height:20%" data-state="none" title="4h · 7kt (raf. 7kt) NNW"></div><div class="bar" style="height:20%" data-state="none" title="5h · 7kt (raf. 7kt) N"></div><div class="bar" style="height:20%" data-state="none" title="6h · 7kt (raf. 7kt) N"></div><div class="bar" style="height:17%" data-state="none" title="7h · 6kt (raf. 6kt) NNE"></div><div class="bar" style="height:17%" data-state="none" title="8h · 6kt (raf. 6kt) NNE"></div><div class="bar" style="height:14%" data-state="none" title="9h · 5kt (raf. 5kt) NNE"></div><div class="bar" style="height:11%" data-state="none" title="10h · 4kt (raf. 5kt) NNE"></div><div class="bar" style="height:6%" data-state="none" title="11h · 2kt (raf. 3kt) NW"></div><div class="bar" style="height:9%" data-state="none" title="12h · 3kt (raf. 3kt) NW"></div><div class="bar" style="height:17%" data-state="none" title="13h · 6kt (raf. 6kt) NNW"></div><div class="bar" style="height:20%" data-state="none" title="14h · 7kt (raf. 8kt) NNW"></div><div class="bar" style="height:23%" data-state="none" title="15h · 8kt (raf. 8kt) NNW"></div><div class="bar" style="height:29%" data-state="none" title="16h · 10kt (raf. 10kt) NNW"></div><div class="bar" style="height:31%" data-state="none" title="17h · 11kt (raf. 12kt) NNW"></div><div class="bar" style="height:37%" data-state="none" title="18h · 13kt (raf. 14kt) NNW"></div><div class="bar" style="height:37%" data-state="none" title="19h · 13kt (raf. 16kt) N"></div><div class="bar" style="height:34%" data-state="none" title="20h · 12kt (raf. 16kt) N"></div><div class="bar" style="height:34%" data-state="none" title="21h · 12kt (raf. 15kt) N"></div><div class="bar" style="height:31%" data-state="none" title="22h · 11kt (raf. 16kt) N"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Dimanche 06/09</div>
+              <div class="ribbon"><div class="bar" style="height:26%" data-state="none" title="3h · 9kt (raf. 12kt) N"></div><div class="bar" style="height:23%" data-state="none" title="4h · 8kt (raf. 10kt) N"></div><div class="bar" style="height:26%" data-state="none" title="5h · 9kt (raf. 12kt) N"></div><div class="bar" style="height:26%" data-state="none" title="6h · 9kt (raf. 12kt) N"></div><div class="bar" style="height:26%" data-state="none" title="7h · 9kt (raf. 11kt) N"></div><div class="bar" style="height:29%" data-state="none" title="8h · 10kt (raf. 12kt) N"></div><div class="bar" style="height:26%" data-state="none" title="9h · 9kt (raf. 12kt) N"></div><div class="bar" style="height:26%" data-state="none" title="10h · 9kt (raf. 12kt) N"></div><div class="bar" style="height:31%" data-state="none" title="11h · 11kt (raf. 13kt) NNW"></div><div class="bar" style="height:34%" data-state="none" title="12h · 12kt (raf. 13kt) NNW"></div><div class="bar" style="height:37%" data-state="none" title="13h · 13kt (raf. 15kt) NNW"></div><div class="bar" style="height:37%" data-state="none" title="14h · 13kt (raf. 15kt) NNW"></div><div class="bar" style="height:40%" data-state="none" title="15h · 14kt (raf. 17kt) NNW"></div><div class="bar" style="height:43%" data-state="k12" title="16h · 15kt (raf. 19kt) NNW"></div><div class="bar" style="height:43%" data-state="k12" title="17h · 15kt (raf. 20kt) N"></div><div class="bar" style="height:46%" data-state="k12" title="18h · 16kt (raf. 22kt) N"></div><div class="bar" style="height:46%" data-state="k12" title="19h · 16kt (raf. 25kt) N"></div><div class="bar" style="height:46%" data-state="k12" title="20h · 16kt (raf. 26kt) N"></div><div class="bar" style="height:43%" data-state="k12" title="21h · 15kt (raf. 25kt) N"></div><div class="bar" style="height:43%" data-state="k12" title="22h · 15kt (raf. 25kt) N"></div></div>
+              <div class="pills"><span class="pill" data-state="k12">12m · 16h–22h · 15–16kt</span></div>
+            </div>
+        </article>
+        <article class="spot-card">
+          <header class="spot-head">
+            <h3>Baleal - Peniche</h3>
+            <a class="wg-link" href="https://www.windguru.cz/39830" target="_blank" rel="noopener">windguru.cz/39830 ↗</a>
+          </header>
+          
+            <div class="dayrow">
+              <div class="daylabel">Aujourd'hui 04/09</div>
+              <div class="ribbon"><div class="bar" style="height:11%" data-state="none" title="3h · 4kt (raf. 5kt) N"></div><div class="bar" style="height:20%" data-state="none" title="4h · 7kt (raf. 10kt) WNW"></div><div class="bar" style="height:20%" data-state="none" title="5h · 7kt (raf. 10kt) NNW"></div><div class="bar" style="height:26%" data-state="none" title="6h · 9kt (raf. 10kt) NE"></div><div class="bar" style="height:11%" data-state="none" title="7h · 4kt (raf. 7kt) WNW"></div><div class="bar" style="height:9%" data-state="none" title="8h · 3kt (raf. 5kt) WSW"></div><div class="bar" style="height:14%" data-state="none" title="9h · 5kt (raf. 7kt) NNE"></div><div class="bar" style="height:26%" data-state="none" title="10h · 9kt (raf. 10kt) NE"></div><div class="bar" style="height:20%" data-state="none" title="11h · 7kt (raf. 8kt) NNE"></div><div class="bar" style="height:20%" data-state="none" title="12h · 7kt (raf. 7kt) N"></div><div class="bar" style="height:26%" data-state="none" title="13h · 9kt (raf. 10kt) NNE"></div><div class="bar" style="height:11%" data-state="none" title="14h · 4kt (raf. 5kt) NE"></div><div class="bar" style="height:20%" data-state="none" title="15h · 7kt (raf. 6kt) NNW"></div><div class="bar" style="height:20%" data-state="none" title="16h · 7kt (raf. 8kt) SW"></div><div class="bar" style="height:31%" data-state="none" title="17h · 11kt (raf. 16kt) SW"></div><div class="bar" style="height:9%" data-state="none" title="18h · 3kt (raf. 10kt) NW"></div><div class="bar" style="height:11%" data-state="none" title="19h · 4kt (raf. 6kt) NE"></div><div class="bar" style="height:14%" data-state="none" title="20h · 5kt (raf. 5kt) ENE"></div><div class="bar" style="height:14%" data-state="none" title="21h · 5kt (raf. 5kt) NE"></div><div class="bar" style="height:20%" data-state="none" title="22h · 7kt (raf. 7kt) NE"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Demain 05/09</div>
+              <div class="ribbon"><div class="bar" style="height:20%" data-state="none" title="3h · 7kt (raf. 8kt) N"></div><div class="bar" style="height:20%" data-state="none" title="4h · 7kt (raf. 8kt) N"></div><div class="bar" style="height:17%" data-state="none" title="5h · 6kt (raf. 8kt) NNE"></div><div class="bar" style="height:14%" data-state="none" title="6h · 5kt (raf. 5kt) NE"></div><div class="bar" style="height:11%" data-state="none" title="7h · 4kt (raf. 4kt) ENE"></div><div class="bar" style="height:9%" data-state="none" title="8h · 3kt (raf. 3kt) E"></div><div class="bar" style="height:11%" data-state="none" title="9h · 4kt (raf. 5kt) NE"></div><div class="bar" style="height:17%" data-state="none" title="10h · 6kt (raf. 7kt) NNE"></div><div class="bar" style="height:17%" data-state="none" title="11h · 6kt (raf. 6kt) N"></div><div class="bar" style="height:17%" data-state="none" title="12h · 6kt (raf. 6kt) N"></div><div class="bar" style="height:20%" data-state="none" title="13h · 7kt (raf. 6kt) NNW"></div><div class="bar" style="height:26%" data-state="none" title="14h · 9kt (raf. 8kt) NNW"></div><div class="bar" style="height:23%" data-state="none" title="15h · 8kt (raf. 10kt) NNW"></div><div class="bar" style="height:23%" data-state="none" title="16h · 8kt (raf. 11kt) NNW"></div><div class="bar" style="height:26%" data-state="none" title="17h · 9kt (raf. 12kt) N"></div><div class="bar" style="height:23%" data-state="none" title="18h · 8kt (raf. 12kt) N"></div><div class="bar" style="height:23%" data-state="none" title="19h · 8kt (raf. 11kt) N"></div><div class="bar" style="height:23%" data-state="none" title="20h · 8kt (raf. 11kt) NNE"></div><div class="bar" style="height:20%" data-state="none" title="21h · 7kt (raf. 11kt) NNE"></div><div class="bar" style="height:20%" data-state="none" title="22h · 7kt (raf. 11kt) NNE"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Dimanche 06/09</div>
+              <div class="ribbon"><div class="bar" style="height:14%" data-state="none" title="3h · 5kt (raf. 5kt) NNE"></div><div class="bar" style="height:14%" data-state="none" title="4h · 5kt (raf. 7kt) N"></div><div class="bar" style="height:14%" data-state="none" title="5h · 5kt (raf. 7kt) N"></div><div class="bar" style="height:14%" data-state="none" title="6h · 5kt (raf. 7kt) N"></div><div class="bar" style="height:17%" data-state="none" title="7h · 6kt (raf. 7kt) N"></div><div class="bar" style="height:17%" data-state="none" title="8h · 6kt (raf. 9kt) NNE"></div><div class="bar" style="height:20%" data-state="none" title="9h · 7kt (raf. 10kt) NNE"></div><div class="bar" style="height:23%" data-state="none" title="10h · 8kt (raf. 11kt) N"></div><div class="bar" style="height:26%" data-state="none" title="11h · 9kt (raf. 11kt) N"></div><div class="bar" style="height:29%" data-state="none" title="12h · 10kt (raf. 12kt) N"></div><div class="bar" style="height:29%" data-state="none" title="13h · 10kt (raf. 13kt) N"></div><div class="bar" style="height:31%" data-state="none" title="14h · 11kt (raf. 14kt) N"></div><div class="bar" style="height:31%" data-state="none" title="15h · 11kt (raf. 15kt) N"></div><div class="bar" style="height:34%" data-state="none" title="16h · 12kt (raf. 17kt) N"></div><div class="bar" style="height:37%" data-state="none" title="17h · 13kt (raf. 18kt) N"></div><div class="bar" style="height:37%" data-state="none" title="18h · 13kt (raf. 20kt) N"></div><div class="bar" style="height:37%" data-state="none" title="19h · 13kt (raf. 21kt) N"></div><div class="bar" style="height:34%" data-state="none" title="20h · 12kt (raf. 21kt) NNE"></div><div class="bar" style="height:34%" data-state="none" title="21h · 12kt (raf. 21kt) NNE"></div><div class="bar" style="height:34%" data-state="none" title="22h · 12kt (raf. 22kt) N"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+        </article>
+        <article class="spot-card">
+          <header class="spot-head">
+            <h3>Lagoa de Óbidos</h3>
+            <a class="wg-link" href="https://www.windguru.cz/829734" target="_blank" rel="noopener">windguru.cz/829734 ↗</a>
+          </header>
+          
+            <div class="dayrow">
+              <div class="daylabel">Aujourd'hui 04/09</div>
+              <div class="ribbon"><div class="bar" style="height:4%" data-state="none" title="3h · 1kt (raf. 3kt) WSW"></div><div class="bar" style="height:14%" data-state="none" title="4h · 5kt (raf. 7kt) W"></div><div class="bar" style="height:14%" data-state="none" title="5h · 5kt (raf. 7kt) NW"></div><div class="bar" style="height:17%" data-state="none" title="6h · 6kt (raf. 9kt) ENE"></div><div class="bar" style="height:20%" data-state="none" title="7h · 7kt (raf. 7kt) W"></div><div class="bar" style="height:11%" data-state="none" title="8h · 4kt (raf. 7kt) WSW"></div><div class="bar" style="height:11%" data-state="none" title="9h · 4kt (raf. 6kt) NNE"></div><div class="bar" style="height:17%" data-state="none" title="10h · 6kt (raf. 9kt) ENE"></div><div class="bar" style="height:14%" data-state="none" title="11h · 5kt (raf. 8kt) NNE"></div><div class="bar" style="height:14%" data-state="none" title="12h · 5kt (raf. 5kt) NNW"></div><div class="bar" style="height:20%" data-state="none" title="13h · 7kt (raf. 9kt) N"></div><div class="bar" style="height:4%" data-state="none" title="14h · 1kt (raf. 4kt) N"></div><div class="bar" style="height:14%" data-state="none" title="15h · 5kt (raf. 4kt) NW"></div><div class="bar" style="height:23%" data-state="none" title="16h · 8kt (raf. 8kt) SW"></div><div class="bar" style="height:29%" data-state="none" title="17h · 10kt (raf. 17kt) SW"></div><div class="bar" style="height:14%" data-state="none" title="18h · 5kt (raf. 13kt) WNW"></div><div class="bar" style="height:17%" data-state="none" title="19h · 6kt (raf. 5kt) E"></div><div class="bar" style="height:9%" data-state="none" title="20h · 3kt (raf. 4kt) ENE"></div><div class="bar" style="height:11%" data-state="none" title="21h · 4kt (raf. 6kt) NE"></div><div class="bar" style="height:14%" data-state="none" title="22h · 5kt (raf. 7kt) NE"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Demain 05/09</div>
+              <div class="ribbon"><div class="bar" style="height:14%" data-state="none" title="3h · 5kt (raf. 6kt) N"></div><div class="bar" style="height:14%" data-state="none" title="4h · 5kt (raf. 6kt) N"></div><div class="bar" style="height:11%" data-state="none" title="5h · 4kt (raf. 6kt) N"></div><div class="bar" style="height:11%" data-state="none" title="6h · 4kt (raf. 4kt) NNE"></div><div class="bar" style="height:9%" data-state="none" title="7h · 3kt (raf. 4kt) ENE"></div><div class="bar" style="height:9%" data-state="none" title="8h · 3kt (raf. 3kt) E"></div><div class="bar" style="height:9%" data-state="none" title="9h · 3kt (raf. 5kt) NE"></div><div class="bar" style="height:14%" data-state="none" title="10h · 5kt (raf. 7kt) NNE"></div><div class="bar" style="height:17%" data-state="none" title="11h · 6kt (raf. 6kt) N"></div><div class="bar" style="height:17%" data-state="none" title="12h · 6kt (raf. 5kt) N"></div><div class="bar" style="height:20%" data-state="none" title="13h · 7kt (raf. 6kt) NNW"></div><div class="bar" style="height:26%" data-state="none" title="14h · 9kt (raf. 7kt) NNW"></div><div class="bar" style="height:23%" data-state="none" title="15h · 8kt (raf. 9kt) NNW"></div><div class="bar" style="height:26%" data-state="none" title="16h · 9kt (raf. 10kt) NNW"></div><div class="bar" style="height:26%" data-state="none" title="17h · 9kt (raf. 12kt) NNW"></div><div class="bar" style="height:23%" data-state="none" title="18h · 8kt (raf. 11kt) NNW"></div><div class="bar" style="height:20%" data-state="none" title="19h · 7kt (raf. 10kt) N"></div><div class="bar" style="height:17%" data-state="none" title="20h · 6kt (raf. 10kt) N"></div><div class="bar" style="height:14%" data-state="none" title="21h · 5kt (raf. 10kt) N"></div><div class="bar" style="height:14%" data-state="none" title="22h · 5kt (raf. 10kt) N"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Dimanche 06/09</div>
+              <div class="ribbon"><div class="bar" style="height:9%" data-state="none" title="3h · 3kt (raf. 4kt) NNE"></div><div class="bar" style="height:11%" data-state="none" title="4h · 4kt (raf. 5kt) NNW"></div><div class="bar" style="height:11%" data-state="none" title="5h · 4kt (raf. 5kt) N"></div><div class="bar" style="height:11%" data-state="none" title="6h · 4kt (raf. 5kt) N"></div><div class="bar" style="height:11%" data-state="none" title="7h · 4kt (raf. 6kt) N"></div><div class="bar" style="height:11%" data-state="none" title="8h · 4kt (raf. 8kt) N"></div><div class="bar" style="height:17%" data-state="none" title="9h · 6kt (raf. 9kt) N"></div><div class="bar" style="height:20%" data-state="none" title="10h · 7kt (raf. 10kt) N"></div><div class="bar" style="height:23%" data-state="none" title="11h · 8kt (raf. 10kt) N"></div><div class="bar" style="height:26%" data-state="none" title="12h · 9kt (raf. 11kt) NNW"></div><div class="bar" style="height:29%" data-state="none" title="13h · 10kt (raf. 12kt) NNW"></div><div class="bar" style="height:31%" data-state="none" title="14h · 11kt (raf. 13kt) NNW"></div><div class="bar" style="height:31%" data-state="none" title="15h · 11kt (raf. 14kt) NNW"></div><div class="bar" style="height:34%" data-state="none" title="16h · 12kt (raf. 16kt) N"></div><div class="bar" style="height:34%" data-state="none" title="17h · 12kt (raf. 17kt) N"></div><div class="bar" style="height:37%" data-state="none" title="18h · 13kt (raf. 19kt) N"></div><div class="bar" style="height:34%" data-state="none" title="19h · 12kt (raf. 20kt) N"></div><div class="bar" style="height:29%" data-state="none" title="20h · 10kt (raf. 20kt) N"></div><div class="bar" style="height:26%" data-state="none" title="21h · 9kt (raf. 20kt) N"></div><div class="bar" style="height:29%" data-state="none" title="22h · 10kt (raf. 21kt) N"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+        </article>
+        <article class="spot-card">
+          <header class="spot-head">
+            <h3>Fonte da Telha (Costa da Caparica)</h3>
+            <a class="wg-link" href="https://www.windguru.cz/317" target="_blank" rel="noopener">windguru.cz/317 ↗</a>
+          </header>
+          
+            <div class="dayrow">
+              <div class="daylabel">Aujourd'hui 04/09</div>
+              <div class="ribbon"><div class="bar" style="height:11%" data-state="none" title="3h · 4kt (raf. 5kt) S"></div><div class="bar" style="height:20%" data-state="none" title="4h · 7kt (raf. 14kt) W"></div><div class="bar" style="height:6%" data-state="none" title="5h · 2kt (raf. 4kt) E"></div><div class="bar" style="height:20%" data-state="none" title="6h · 7kt (raf. 8kt) SSW"></div><div class="bar" style="height:29%" data-state="none" title="7h · 10kt (raf. 16kt) W"></div><div class="bar" style="height:4%" data-state="none" title="8h · 1kt (raf. 6kt) N"></div><div class="bar" style="height:14%" data-state="none" title="9h · 5kt (raf. 6kt) ENE"></div><div class="bar" style="height:14%" data-state="none" title="10h · 5kt (raf. 7kt) ENE"></div><div class="bar" style="height:17%" data-state="none" title="11h · 6kt (raf. 6kt) NE"></div><div class="bar" style="height:17%" data-state="none" title="12h · 6kt (raf. 8kt) NNE"></div><div class="bar" style="height:9%" data-state="none" title="13h · 3kt (raf. 4kt) WNW"></div><div class="bar" style="height:9%" data-state="none" title="14h · 3kt (raf. 5kt) NW"></div><div class="bar" style="height:26%" data-state="none" title="15h · 9kt (raf. 13kt) WSW"></div><div class="bar" style="height:23%" data-state="none" title="16h · 8kt (raf. 16kt) W"></div><div class="bar" style="height:17%" data-state="none" title="17h · 6kt (raf. 12kt) W"></div><div class="bar" style="height:9%" data-state="none" title="18h · 3kt (raf. 9kt) NNW"></div><div class="bar" style="height:17%" data-state="none" title="19h · 6kt (raf. 10kt) N"></div><div class="bar" style="height:20%" data-state="none" title="20h · 7kt (raf. 9kt) NNE"></div><div class="bar" style="height:17%" data-state="none" title="21h · 6kt (raf. 7kt) NE"></div><div class="bar" style="height:14%" data-state="none" title="22h · 5kt (raf. 5kt) ENE"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Demain 05/09</div>
+              <div class="ribbon"><div class="bar" style="height:6%" data-state="none" title="3h · 2kt (raf. 3kt) SW"></div><div class="bar" style="height:6%" data-state="none" title="4h · 2kt (raf. 2kt) SW"></div><div class="bar" style="height:4%" data-state="none" title="5h · 1kt (raf. 2kt) WSW"></div><div class="bar" style="height:4%" data-state="none" title="6h · 1kt (raf. 2kt) SW"></div><div class="bar" style="height:4%" data-state="none" title="7h · 1kt (raf. 1kt) SSE"></div><div class="bar" style="height:6%" data-state="none" title="8h · 2kt (raf. 2kt) ENE"></div><div class="bar" style="height:6%" data-state="none" title="9h · 2kt (raf. 3kt) ENE"></div><div class="bar" style="height:6%" data-state="none" title="10h · 2kt (raf. 3kt) NE"></div><div class="bar" style="height:4%" data-state="none" title="11h · 1kt (raf. 2kt) NNW"></div><div class="bar" style="height:11%" data-state="none" title="12h · 4kt (raf. 2kt) WNW"></div><div class="bar" style="height:14%" data-state="none" title="13h · 5kt (raf. 2kt) W"></div><div class="bar" style="height:17%" data-state="none" title="14h · 6kt (raf. 3kt) W"></div><div class="bar" style="height:23%" data-state="none" title="15h · 8kt (raf. 6kt) W"></div><div class="bar" style="height:26%" data-state="none" title="16h · 9kt (raf. 8kt) W"></div><div class="bar" style="height:26%" data-state="none" title="17h · 9kt (raf. 10kt) WNW"></div><div class="bar" style="height:26%" data-state="none" title="18h · 9kt (raf. 12kt) WNW"></div><div class="bar" style="height:26%" data-state="none" title="19h · 9kt (raf. 15kt) NW"></div><div class="bar" style="height:20%" data-state="none" title="20h · 7kt (raf. 13kt) NW"></div><div class="bar" style="height:17%" data-state="none" title="21h · 6kt (raf. 9kt) NW"></div><div class="bar" style="height:17%" data-state="none" title="22h · 6kt (raf. 10kt) NNW"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Dimanche 06/09</div>
+              <div class="ribbon"><div class="bar" style="height:9%" data-state="none" title="3h · 3kt (raf. 6kt) NNW"></div><div class="bar" style="height:6%" data-state="none" title="4h · 2kt (raf. 5kt) N"></div><div class="bar" style="height:9%" data-state="none" title="5h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="6h · 3kt (raf. 5kt) N"></div><div class="bar" style="height:9%" data-state="none" title="7h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="8h · 3kt (raf. 5kt) N"></div><div class="bar" style="height:9%" data-state="none" title="9h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="10h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:11%" data-state="none" title="11h · 4kt (raf. 5kt) NNW"></div><div class="bar" style="height:17%" data-state="none" title="12h · 6kt (raf. 6kt) NW"></div><div class="bar" style="height:23%" data-state="none" title="13h · 8kt (raf. 6kt) NW"></div><div class="bar" style="height:26%" data-state="none" title="14h · 9kt (raf. 8kt) NW"></div><div class="bar" style="height:31%" data-state="none" title="15h · 11kt (raf. 9kt) NW"></div><div class="bar" style="height:34%" data-state="none" title="16h · 12kt (raf. 11kt) NW"></div><div class="bar" style="height:37%" data-state="none" title="17h · 13kt (raf. 13kt) NNW"></div><div class="bar" style="height:34%" data-state="none" title="18h · 12kt (raf. 15kt) NNW"></div><div class="bar" style="height:31%" data-state="none" title="19h · 11kt (raf. 18kt) NNW"></div><div class="bar" style="height:31%" data-state="none" title="20h · 11kt (raf. 19kt) NNW"></div><div class="bar" style="height:26%" data-state="none" title="21h · 9kt (raf. 18kt) N"></div><div class="bar" style="height:20%" data-state="none" title="22h · 7kt (raf. 14kt) N"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+        </article>
+        <article class="spot-card">
+          <header class="spot-head">
+            <h3>Lagoa de Albufeira</h3>
+            <a class="wg-link" href="https://www.windguru.cz/185" target="_blank" rel="noopener">windguru.cz/185 ↗</a>
+          </header>
+          
+            <div class="dayrow">
+              <div class="daylabel">Aujourd'hui 04/09</div>
+              <div class="ribbon"><div class="bar" style="height:11%" data-state="none" title="3h · 4kt (raf. 6kt) S"></div><div class="bar" style="height:17%" data-state="none" title="4h · 6kt (raf. 16kt) WNW"></div><div class="bar" style="height:6%" data-state="none" title="5h · 2kt (raf. 3kt) ENE"></div><div class="bar" style="height:23%" data-state="none" title="6h · 8kt (raf. 9kt) SSW"></div><div class="bar" style="height:26%" data-state="none" title="7h · 9kt (raf. 16kt) WNW"></div><div class="bar" style="height:6%" data-state="none" title="8h · 2kt (raf. 4kt) NNW"></div><div class="bar" style="height:17%" data-state="none" title="9h · 6kt (raf. 7kt) NE"></div><div class="bar" style="height:14%" data-state="none" title="10h · 5kt (raf. 7kt) ESE"></div><div class="bar" style="height:17%" data-state="none" title="11h · 6kt (raf. 7kt) ENE"></div><div class="bar" style="height:20%" data-state="none" title="12h · 7kt (raf. 9kt) NNE"></div><div class="bar" style="height:9%" data-state="none" title="13h · 3kt (raf. 3kt) NNW"></div><div class="bar" style="height:11%" data-state="none" title="14h · 4kt (raf. 5kt) W"></div><div class="bar" style="height:26%" data-state="none" title="15h · 9kt (raf. 13kt) W"></div><div class="bar" style="height:23%" data-state="none" title="16h · 8kt (raf. 14kt) W"></div><div class="bar" style="height:17%" data-state="none" title="17h · 6kt (raf. 11kt) WNW"></div><div class="bar" style="height:11%" data-state="none" title="18h · 4kt (raf. 8kt) N"></div><div class="bar" style="height:14%" data-state="none" title="19h · 5kt (raf. 9kt) N"></div><div class="bar" style="height:17%" data-state="none" title="20h · 6kt (raf. 9kt) NNE"></div><div class="bar" style="height:17%" data-state="none" title="21h · 6kt (raf. 7kt) NE"></div><div class="bar" style="height:14%" data-state="none" title="22h · 5kt (raf. 6kt) ENE"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Demain 05/09</div>
+              <div class="ribbon"><div class="bar" style="height:6%" data-state="none" title="3h · 2kt (raf. 3kt) W"></div><div class="bar" style="height:6%" data-state="none" title="4h · 2kt (raf. 2kt) WNW"></div><div class="bar" style="height:4%" data-state="none" title="5h · 1kt (raf. 2kt) NW"></div><div class="bar" style="height:4%" data-state="none" title="6h · 1kt (raf. 2kt) NNW"></div><div class="bar" style="height:4%" data-state="none" title="7h · 1kt (raf. 1kt) E"></div><div class="bar" style="height:6%" data-state="none" title="8h · 2kt (raf. 2kt) E"></div><div class="bar" style="height:9%" data-state="none" title="9h · 3kt (raf. 3kt) ENE"></div><div class="bar" style="height:6%" data-state="none" title="10h · 2kt (raf. 3kt) ENE"></div><div class="bar" style="height:4%" data-state="none" title="11h · 1kt (raf. 2kt) NNW"></div><div class="bar" style="height:9%" data-state="none" title="12h · 3kt (raf. 2kt) W"></div><div class="bar" style="height:14%" data-state="none" title="13h · 5kt (raf. 2kt) W"></div><div class="bar" style="height:17%" data-state="none" title="14h · 6kt (raf. 4kt) W"></div><div class="bar" style="height:23%" data-state="none" title="15h · 8kt (raf. 7kt) W"></div><div class="bar" style="height:26%" data-state="none" title="16h · 9kt (raf. 9kt) WNW"></div><div class="bar" style="height:29%" data-state="none" title="17h · 10kt (raf. 11kt) WNW"></div><div class="bar" style="height:29%" data-state="none" title="18h · 10kt (raf. 13kt) WNW"></div><div class="bar" style="height:26%" data-state="none" title="19h · 9kt (raf. 15kt) NW"></div><div class="bar" style="height:20%" data-state="none" title="20h · 7kt (raf. 12kt) NW"></div><div class="bar" style="height:17%" data-state="none" title="21h · 6kt (raf. 8kt) NW"></div><div class="bar" style="height:17%" data-state="none" title="22h · 6kt (raf. 8kt) NW"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+            <div class="dayrow">
+              <div class="daylabel">Dimanche 06/09</div>
+              <div class="ribbon"><div class="bar" style="height:9%" data-state="none" title="3h · 3kt (raf. 5kt) NNW"></div><div class="bar" style="height:9%" data-state="none" title="4h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="5h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="6h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="7h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="8h · 3kt (raf. 4kt) N"></div><div class="bar" style="height:6%" data-state="none" title="9h · 2kt (raf. 4kt) N"></div><div class="bar" style="height:6%" data-state="none" title="10h · 2kt (raf. 4kt) N"></div><div class="bar" style="height:9%" data-state="none" title="11h · 3kt (raf. 4kt) NNW"></div><div class="bar" style="height:17%" data-state="none" title="12h · 6kt (raf. 6kt) NW"></div><div class="bar" style="height:20%" data-state="none" title="13h · 7kt (raf. 6kt) WNW"></div><div class="bar" style="height:26%" data-state="none" title="14h · 9kt (raf. 8kt) WNW"></div><div class="bar" style="height:31%" data-state="none" title="15h · 11kt (raf. 9kt) NW"></div><div class="bar" style="height:34%" data-state="none" title="16h · 12kt (raf. 12kt) NW"></div><div class="bar" style="height:37%" data-state="none" title="17h · 13kt (raf. 13kt) NW"></div><div class="bar" style="height:34%" data-state="none" title="18h · 12kt (raf. 15kt) NNW"></div><div class="bar" style="height:34%" data-state="none" title="19h · 12kt (raf. 18kt) NNW"></div><div class="bar" style="height:29%" data-state="none" title="20h · 10kt (raf. 19kt) NNW"></div><div class="bar" style="height:23%" data-state="none" title="21h · 8kt (raf. 18kt) N"></div><div class="bar" style="height:20%" data-state="none" title="22h · 7kt (raf. 12kt) N"></div></div>
+              <div class="pills"><span class="pill" data-state="none">pas de fenêtre ridable</span></div>
+            </div>
+        </article>
+    </div>
+  </section>
+
+  <section class="legend">
+    <span class="pill" data-state="k12">12m</span> 15–20 nds
+    <span class="pill" data-state="mix">12m ou 9m</span> 17–20 nds (recouvrement)
+    <span class="pill" data-state="k9">9m</span> 17–30 nds
+    <span class="pill" data-state="danger">trop fort</span> &gt;30 nds
+    <span class="pill" data-state="none">pas de vent</span> &lt;15 nds
+  </section>
+
+  <footer>
+    Source : Windguru (modèle GFS 13km, wap2.windguru.cz) · spots identifiés depuis
+    <a href="https://www.passarokite.com/fr/blog/kite/ou-faire-du-kitesurf-autour-de-lisbonne/" target="_blank" rel="noopener">passarokite.com</a>
+    · seuils calibrés pour un rider de 90kg avec un 12m et un 9m — ajuste-les si besoin.
+  </footer>
+</div>
+</div>
+
+<script>
+(function(){
+  var CODE = "123kitesurf";
+  var KEY = "kite-lisbonne-access";
+  var gate = document.getElementById("gate");
+  var content = document.getElementById("content");
+  var input = document.getElementById("gate-input");
+  var err = document.getElementById("gate-error");
+
+  function unlock(){
+    gate.classList.add("hidden");
+    content.classList.add("visible");
+  }
+
+  try {
+    if (localStorage.getItem(KEY) === "ok") { unlock(); }
+  } catch(e) {}
+
+  function tryCode(){
+    var v = (input.value || "").trim().toLowerCase();
+    if (v === CODE) {
+      try { localStorage.setItem(KEY, "ok"); } catch(e) {}
+      unlock();
+    } else {
+      err.textContent = "Code incorrect.";
+      input.select();
+    }
+  }
+
+  document.getElementById("gate-submit").addEventListener("click", tryCode);
+  input.addEventListener("keydown", function(e){
+    if (e.key === "Enter") tryCode();
+  });
+})();
+</script>
+</body>
+</html>

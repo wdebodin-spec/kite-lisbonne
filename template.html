@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kite Lisbonne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#eef2f1; --surface:#ffffff; --surface-2:#f4f7f6; --ink:#16232b; --muted:#56676c; --border:#d7e0de;
+  --accent:#a9791f; --accent-ink:#7c5814;
+  --k-none:#aeb8b6; --k-12:#2f6f9e; --k-mix:#8a5fbf; --k-9:#d9622c; --k-danger:#c23b3b;
+  --k-none-bg:#eef1f0; --k-12-bg:#e4eef6; --k-mix-bg:#efe8f8; --k-9-bg:#fbe7db; --k-danger-bg:#f9e0df;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0c1416; --surface:#121c1e; --surface-2:#16211f; --ink:#e7edec; --muted:#9fb0ae; --border:#233130;
+    --accent:#d1a24a; --accent-ink:#e4bb6c;
+    --k-none:#647573; --k-12:#5b9bd0; --k-mix:#a883dd; --k-9:#ef8f52; --k-danger:#e2685f;
+    --k-none-bg:#1a2523; --k-12-bg:#16262e; --k-mix-bg:#211a2c; --k-9-bg:#2a1d14; --k-danger-bg:#2a1717;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,sans-serif;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+h1,h2,h3{font-family:"Big Shoulders Display",system-ui,sans-serif;font-weight:800;letter-spacing:.01em;
+  text-wrap:balance;margin:0}
+
+/* --- gate --- */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;
+  z-index:100;padding:1.5rem}
+#gate.hidden{display:none}
+.gate-card{background:var(--surface);border:1px solid var(--border);border-radius:.9rem;
+  padding:2.2rem 2rem;max-width:340px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.gate-card .eyebrow{display:block;margin-bottom:.3rem}
+.gate-card h1{font-size:1.9rem;margin-bottom:1.4rem}
+.gate-card h1 em{font-style:normal;color:var(--accent)}
+#gate-input{width:100%;font-family:"IBM Plex Mono",monospace;font-size:1rem;padding:.7rem .8rem;
+  border:1px solid var(--border);border-radius:.5rem;background:var(--surface-2);color:var(--ink);
+  text-align:center;letter-spacing:.03em}
+#gate-input:focus{outline:2px solid var(--accent);outline-offset:1px}
+#gate-submit{margin-top:.8rem;width:100%;font-family:"Source Sans 3",sans-serif;font-weight:600;font-size:.95rem;
+  padding:.7rem .8rem;border:none;border-radius:.5rem;background:var(--accent);color:#fff;cursor:pointer}
+#gate-submit:hover{background:var(--accent-ink)}
+#gate-error{margin-top:.8rem;font-size:.85rem;color:var(--k-danger);min-height:1.2em}
+#content{display:none}
+#content.visible{display:block}
+
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent-ink);margin:0 0 .4rem}
+.wrap{max-width:1120px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+header.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;
+  border-bottom:2px solid var(--border);padding-bottom:1.4rem;margin-bottom:2rem}
+h1{font-size:clamp(1.9rem,4vw,2.6rem);color:var(--ink)}
+h1 em{font-style:normal;color:var(--accent)}
+.profile{display:flex;gap:.5rem;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:.82rem}
+.profile span{background:var(--surface-2);border:1px solid var(--border);border-radius:999px;
+  padding:.3rem .75rem;color:var(--muted)}
+.meta-right{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted)}
+section{margin-bottom:2.6rem}
+h2{font-size:1.4rem;margin-bottom:.9rem}
+.warn{background:var(--k-danger-bg);color:var(--k-danger);border:1px solid var(--k-danger);
+  border-radius:.5rem;padding:.6rem .9rem;font-size:.9rem}
+.muted{color:var(--muted)}
+
+.chips{display:flex;flex-wrap:wrap;gap:.9rem}
+.chip{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--k-none);
+  border-radius:.6rem;padding:.85rem 1rem;min-width:220px;flex:1 1 240px;max-width:300px}
+.chip[data-state="k9"]{border-left-color:var(--k-9)}
+.chip[data-state="k12"]{border-left-color:var(--k-12)}
+.chip[data-state="mix"]{border-left-color:var(--k-mix)}
+.chip-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+.chip-day{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.04em}
+.chip-spot{font-weight:700;font-size:1.02rem;margin-bottom:.3rem}
+.chip-meta{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted);
+  font-variant-numeric:tabular-nums}
+
+.pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:.72rem;font-weight:600;
+  padding:.18rem .55rem;border-radius:999px;background:var(--k-none-bg);color:var(--k-none);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill[data-state="k12"]{background:var(--k-12-bg);color:var(--k-12)}
+.pill[data-state="k9"]{background:var(--k-9-bg);color:var(--k-9)}
+.pill[data-state="mix"]{background:var(--k-mix-bg);color:var(--k-mix)}
+.pill[data-state="danger"]{background:var(--k-danger-bg);color:var(--k-danger)}
+
+.spot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.3rem}
+.spot-card{background:var(--surface);border:1px solid var(--border);border-radius:.75rem;padding:1.2rem 1.3rem 1.4rem}
+.spot-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.9rem;gap:.6rem}
+.spot-head h3{font-size:1.25rem}
+.wg-link{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--accent-ink);text-decoration:none;
+  white-space:nowrap}
+.wg-link:hover{text-decoration:underline}
+.dayrow{padding:.6rem 0;border-top:1px solid var(--border)}
+.dayrow:first-of-type{border-top:none}
+.daylabel{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.04em;margin-bottom:.35rem}
+.ribbon{display:flex;align-items:flex-end;gap:2px;height:44px;background:var(--surface-2);border-radius:.3rem;
+  padding:.25rem .3rem;margin-bottom:.45rem}
+.ribbon-empty{font-size:.8rem;color:var(--muted);padding:.4rem 0}
+.bar{flex:1 1 0;min-width:2px;border-radius:1px;background:var(--k-none)}
+.bar[data-state="k12"]{background:var(--k-12)}
+.bar[data-state="k9"]{background:var(--k-9)}
+.bar[data-state="mix"]{background:var(--k-mix)}
+.bar[data-state="danger"]{background:var(--k-danger)}
+.pills{display:flex;flex-wrap:wrap;gap:.35rem}
+
+.legend{display:flex;flex-wrap:wrap;gap:1.1rem;align-items:center;font-size:.85rem;color:var(--muted)}
+.legend .pill{margin-right:.35rem}
+
+footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--border);
+  font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted)}
+footer a{color:var(--accent-ink)}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <span class="eyebrow">Accès privé</span>
+    <h1>Kite <em>Lisbonne</em></h1>
+    <input id="gate-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code d'accès" />
+    <button id="gate-submit">Entrer</button>
+    <div id="gate-error"></div>
+  </div>
+</div>
+
+<div id="content">
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Prévision vent · 5 spots</p>
+      <h1>Kite <em>Lisbonne</em></h1>
+      <div class="profile" style="margin-top:.7rem">
+        <span>William · 90kg</span><span>kites 12m / 9m</span><span>fenêtre J0→J+2</span>
+      </div>
+    </div>
+    <div class="meta-right">
+      Généré le __NOW__<br>Rafraîchi tous les 3 jours (GitHub Actions)
+    </div>
+  </header>
+
+  __WARN__
+
+  <section>
+    <h2>Meilleures fenêtres</h2>
+    <div class="chips">
+      __CHIPS__
+    </div>
+  </section>
+
+  <section>
+    <h2>Détail par spot</h2>
+    <div class="spot-grid">
+      __SPOTS__
+    </div>
+  </section>
+
+  <section class="legend">
+    <span class="pill" data-state="k12">12m</span> 15–20 nds
+    <span class="pill" data-state="mix">12m ou 9m</span> 17–20 nds (recouvrement)
+    <span class="pill" data-state="k9">9m</span> 17–30 nds
+    <span class="pill" data-state="danger">trop fort</span> &gt;30 nds
+    <span class="pill" data-state="none">pas de vent</span> &lt;15 nds
+  </section>
+
+  <footer>
+    Source : Windguru (modèle GFS 13km, wap2.windguru.cz) · spots identifiés depuis
+    <a href="https://www.passarokite.com/fr/blog/kite/ou-faire-du-kitesurf-autour-de-lisbonne/" target="_blank" rel="noopener">passarokite.com</a>
+    · seuils calibrés pour un rider de 90kg avec un 12m et un 9m — ajuste-les si besoin.
+  </footer>
+</div>
+</div>
+
+<script>
+(function(){
+  var CODE = "123kitesurf";
+  var KEY = "kite-lisbonne-access";
+  var gate = document.getElementById("gate");
+  var content = document.getElementById("content");
+  var input = document.getElementById("gate-input");
+  var err = document.getElementById("gate-error");
+
+  function unlock(){
+    gate.classList.add("hidden");
+    content.classList.add("visible");
+  }
+
+  try {
+    if (localStorage.getItem(KEY) === "ok") { unlock(); }
+  } catch(e) {}
+
+  function tryCode(){
+    var v = (input.value || "").trim().toLowerCase();
+    if (v === CODE) {
+      try { localStorage.setItem(KEY, "ok"); } catch(e) {}
+      unlock();
+    } else {
+      err.textContent = "Code incorrect.";
+      input.select();
+    }
+  }
+
+  document.getElementById("gate-submit").addEventListener("click", tryCode);
+  input.addEventListener("keydown", function(e){
+    if (e.key === "Enter") tryCode();
+  });
+})();
+</script>
+</body>
+</html>
