@@ -1,4 +1,4 @@
-import re, urllib.request, datetime, html as htmlmod, os
+import re, urllib.request, datetime, html as htmlmod, os, json
 
 KITE_12M = (15, 20)
 KITE_9M = (17, 30)
@@ -213,7 +213,35 @@ def build_dashboard_html(labels, per_spot, any_fetch_ok):
     with open(os.path.join(ROOT, "template.html"), encoding="utf-8") as f:
         template = f.read()
     return (template.replace("__NOW__", now).replace("__WARN__", warn)
-            .replace("__CHIPS__", chips).replace("__SPOTS__", "".join(spot_blocks)))
+            .replace("__CHIPS__", chips).replace("__SPOTS__", "".join(spot_blocks))
+            .replace("__HISTORY__", build_history_html()))
+
+
+def build_history_html():
+    path = os.path.join(ROOT, "sessions.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            sessions = json.load(f)
+    except FileNotFoundError:
+        sessions = []
+
+    if not sessions:
+        return '<p class="muted">Aucune session enregistrée pour l\'instant.</p>'
+
+    sessions = sorted(sessions, key=lambda s: s["date"], reverse=True)
+    items = []
+    for s in sessions:
+        d = datetime.date.fromisoformat(s["date"])
+        date_label = d.strftime("%d/%m/%Y")
+        note = s.get("note") or ""
+        note_html = f'<span class="history-note">— {htmlmod.escape(note)}</span>' if note else ""
+        items.append(f'''
+          <div class="history-item">
+            <span class="history-date">{date_label}</span>
+            <span class="history-spot">{htmlmod.escape(s["spot"])}</span>
+            {note_html}
+          </div>''')
+    return f'<div class="history">{"".join(items)}</div>'
 
 
 if __name__ == "__main__":

@@ -115,6 +115,14 @@ h2{font-size:1.4rem;margin-bottom:.9rem}
 .legend{display:flex;flex-wrap:wrap;gap:1.1rem;align-items:center;font-size:.85rem;color:var(--muted)}
 .legend .pill{margin-right:.35rem}
 
+.history{display:flex;flex-direction:column}
+.history-item{display:flex;align-items:baseline;gap:.9rem;padding:.55rem 0;border-top:1px solid var(--border)}
+.history-item:first-child{border-top:none}
+.history-date{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted);
+  white-space:nowrap;min-width:6.5em}
+.history-spot{font-weight:700}
+.history-note{color:var(--muted);font-size:.88rem}
+
 footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--border);
   font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted)}
 footer a{color:var(--accent-ink)}
@@ -170,6 +178,12 @@ footer a{color:var(--accent-ink)}
     <span class="pill" data-state="k9">9m</span> 17–30 nds
     <span class="pill" data-state="danger">trop fort</span> &gt;30 nds
     <span class="pill" data-state="none">pas de vent</span> &lt;15 nds
+  </section>
+
+  <section>
+    <h2>Historique</h2>
+    <p class="muted" style="margin:-.5rem 0 1rem;font-size:.85rem">Les sessions déjà faites</p>
+    __HISTORY__
   </section>
 
   <footer>
