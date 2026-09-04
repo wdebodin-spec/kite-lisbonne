@@ -6,12 +6,13 @@ DAY_START = 8
 DAY_END = 18
 
 SPOTS = [
-    (31, "Guincho"),
-    (39830, "Baleal - Peniche"),
-    (829734, "Lagoa de Óbidos"),
-    (317, "Fonte da Telha (Costa da Caparica)"),
-    (185, "Lagoa de Albufeira"),
+    (31, "Guincho", "25 min"),
+    (39830, "Baleal - Peniche", "1h20"),
+    (829734, "Lagoa de Óbidos", "1h15"),
+    (317, "Fonte da Telha (Costa da Caparica)", "30 min"),
+    (185, "Lagoa de Albufeira", "1h00"),
 ]
+# Temps de trajet voiture, sans trafic, depuis Jardim da Estrela (Lisboa) — calculés via OSRM le 2026-09-04
 
 STATE_LABEL = {"k12": "12m", "k9": "9m", "mix": "12m ou 9m", "danger": "trop fort", "none": "pas de vent"}
 
@@ -136,7 +137,7 @@ def collect():
     labels = day_labels(3)
     per_spot = []
     any_fetch_ok = False
-    for sc, name in SPOTS:
+    for sc, name, drive in SPOTS:
         per_day_data = []
         try:
             data = parse(fetch(sc))
@@ -147,7 +148,7 @@ def collect():
         except Exception:
             per_day_data = [[], [], []]
         per_day_windows = [windows_for_day(dd) if dd else [] for dd in per_day_data]
-        per_spot.append({"sc": sc, "name": name, "per_day_data": per_day_data, "per_day_windows": per_day_windows})
+        per_spot.append({"sc": sc, "name": name, "drive": drive, "per_day_data": per_day_data, "per_day_windows": per_day_windows})
     return labels, per_spot, any_fetch_ok
 
 
@@ -186,7 +187,10 @@ def build_dashboard_html(labels, per_spot, any_fetch_ok):
         <article class="spot-card">
           <header class="spot-head">
             <h3>{htmlmod.escape(spot["name"])}</h3>
-            <a class="wg-link" href="https://www.windguru.cz/{spot["sc"]}" target="_blank" rel="noopener">windguru.cz/{spot["sc"]} ↗</a>
+            <div class="spot-meta">
+              <span class="drive-time">🚗 {spot["drive"]} depuis Jardim da Estrela</span>
+              <a class="wg-link" href="https://www.windguru.cz/{spot["sc"]}" target="_blank" rel="noopener">windguru.cz/{spot["sc"]} ↗</a>
+            </div>
           </header>
           {''.join(day_rows)}
         </article>''')
