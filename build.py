@@ -7,10 +7,10 @@ DAY_END = 18
 
 SPOTS = [
     (31, "Guincho", "25 min"),
-    (39830, "Baleal - Peniche", "1h20"),
-    (829734, "Lagoa de Óbidos", "1h15"),
     (317, "Fonte da Telha (Costa da Caparica)", "30 min"),
     (185, "Lagoa de Albufeira", "1h00"),
+    (829734, "Lagoa de Óbidos", "1h15"),
+    (39830, "Baleal - Peniche", "1h20"),
 ]
 # Temps de trajet voiture, sans trafic, depuis Jardim da Estrela (Lisboa) — calculés via OSRM le 2026-09-04
 
