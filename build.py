@@ -4,6 +4,8 @@ KITE_12M = (15, 20)
 KITE_9M = (17, 30)
 DAY_START = 8
 DAY_END = 18
+N_DAYS = 5  # marge par rapport aux 3 jours de cadence : la GitHub Action tourne avec ~4-5h de retard,
+            # une fenêtre de 3 jours pile laissait le dashboard sans "aujourd'hui" les matins de refresh
 
 SPOTS = [
     (31, "Guincho", "25 min"),
@@ -90,7 +92,7 @@ def kite_state(speed):
     return "none"
 
 
-def day_labels(n_days=3):
+def day_labels(n_days=N_DAYS):
     today = datetime.date.today()
     names = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
     out = []
@@ -134,7 +136,7 @@ def bars_html(day_data):
 
 
 def collect():
-    labels = day_labels(3)
+    labels = day_labels(N_DAYS)
     per_spot = []
     any_fetch_ok = False
     for sc, name, drive in SPOTS:
@@ -142,11 +144,11 @@ def collect():
         try:
             data = parse(fetch(sc))
             any_fetch_ok = True
-            for idx in range(3):
+            for idx in range(N_DAYS):
                 per_day_data.append([d for d in data if d["day_index"] == idx and d["speed"] is not None
                                       and DAY_START <= d["hour"] <= DAY_END])
         except Exception:
-            per_day_data = [[], [], []]
+            per_day_data = [[] for _ in range(N_DAYS)]
         per_day_windows = [windows_for_day(dd) if dd else [] for dd in per_day_data]
         per_spot.append({"sc": sc, "name": name, "drive": drive, "per_day_data": per_day_data, "per_day_windows": per_day_windows})
     return labels, per_spot, any_fetch_ok
@@ -205,7 +207,7 @@ def build_dashboard_html(labels, per_spot, any_fetch_ok):
             <div class="chip-meta">{h['h0']}h–{h['h1']}h &nbsp;·&nbsp; {h['smin']}–{h['smax']}kt &nbsp;·&nbsp; raf. {h['gmax']}kt &nbsp;·&nbsp; {h['dir']}</div>
           </div>''' for h in all_highlights)
     else:
-        chips = '<p class="muted">Aucune fenêtre ridable détectée sur les 3 prochains jours pour un 12m ou un 9m.</p>'
+        chips = f'<p class="muted">Aucune fenêtre ridable détectée sur les {N_DAYS} prochains jours pour un 12m ou un 9m.</p>'
 
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%d/%m/%Y à %H:%M UTC")
     warn = "" if any_fetch_ok else '<p class="warn">⚠ Windguru injoignable au moment de la génération — données possiblement absentes.</p>'
