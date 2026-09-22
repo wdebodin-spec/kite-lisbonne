@@ -2,7 +2,11 @@ name: Update kite dashboard
 
 on:
   schedule:
-    - cron: "0 6 */3 * *"
+    # GitHub lance les crons planifiés avec ~4-5h de retard (observé : 6h UTC -> 10h-11h UTC).
+    # On vise 0h17 (hors pic de l'heure pile) + un 2e passage de secours à 3h17, pour que le site
+    # soit à jour avant le mail de notif (RemoteTrigger à 7h UTC).
+    - cron: "17 0 */3 * *"
+    - cron: "17 3 */3 * *"
   workflow_dispatch: {}
 
 permissions:
