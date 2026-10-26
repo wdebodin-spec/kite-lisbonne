@@ -1,6 +1,6 @@
 import re, urllib.request, datetime, html as htmlmod, os, json, statistics
 
-KITE_12M = (13, 20)
+KITE_12M = (14, 20)
 KITE_9M = (17, 30)
 DAY_START = 8
 DAY_END = 18
