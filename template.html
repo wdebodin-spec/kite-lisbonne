@@ -12,15 +12,15 @@
   color-scheme: light dark;
   --bg:#eef2f1; --surface:#ffffff; --surface-2:#f4f7f6; --ink:#16232b; --muted:#56676c; --border:#d7e0de;
   --accent:#a9791f; --accent-ink:#7c5814;
-  --k-none:#aeb8b6; --k-12:#2f6f9e; --k-mix:#8a5fbf; --k-9:#d9622c; --k-danger:#c23b3b;
-  --k-none-bg:#eef1f0; --k-12-bg:#e4eef6; --k-mix-bg:#efe8f8; --k-9-bg:#fbe7db; --k-danger-bg:#f9e0df;
+  --k-none:#aeb8b6; --k-maybe:#8f8a3c; --k-12:#2f6f9e; --k-mix:#8a5fbf; --k-9:#d9622c; --k-danger:#c23b3b;
+  --k-none-bg:#eef1f0; --k-maybe-bg:#f1f0dc; --k-12-bg:#e4eef6; --k-mix-bg:#efe8f8; --k-9-bg:#fbe7db; --k-danger-bg:#f9e0df;
 }
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#0c1416; --surface:#121c1e; --surface-2:#16211f; --ink:#e7edec; --muted:#9fb0ae; --border:#233130;
     --accent:#d1a24a; --accent-ink:#e4bb6c;
-    --k-none:#647573; --k-12:#5b9bd0; --k-mix:#a883dd; --k-9:#ef8f52; --k-danger:#e2685f;
-    --k-none-bg:#1a2523; --k-12-bg:#16262e; --k-mix-bg:#211a2c; --k-9-bg:#2a1d14; --k-danger-bg:#2a1717;
+    --k-none:#647573; --k-maybe:#c4bd62; --k-12:#5b9bd0; --k-mix:#a883dd; --k-9:#ef8f52; --k-danger:#e2685f;
+    --k-none-bg:#1a2523; --k-maybe-bg:#24231a; --k-12-bg:#16262e; --k-mix-bg:#211a2c; --k-9-bg:#2a1d14; --k-danger-bg:#2a1717;
   }
 }
 *{box-sizing:border-box}
@@ -73,6 +73,7 @@ h2{font-size:1.4rem;margin-bottom:.9rem}
   border-radius:.6rem;padding:.85rem 1rem;min-width:220px;flex:1 1 240px;max-width:300px}
 .chip[data-state="k9"]{border-left-color:var(--k-9)}
 .chip[data-state="k12"]{border-left-color:var(--k-12)}
+.chip[data-state="maybe"]{border-left-color:var(--k-maybe)}
 .chip[data-state="mix"]{border-left-color:var(--k-mix)}
 .chip-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
 .chip-day{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted);text-transform:uppercase;
@@ -85,6 +86,7 @@ h2{font-size:1.4rem;margin-bottom:.9rem}
   padding:.18rem .55rem;border-radius:999px;background:var(--k-none-bg);color:var(--k-none);
   white-space:nowrap;font-variant-numeric:tabular-nums}
 .pill[data-state="k12"]{background:var(--k-12-bg);color:var(--k-12)}
+.pill[data-state="maybe"]{background:var(--k-maybe-bg);color:var(--k-maybe)}
 .pill[data-state="k9"]{background:var(--k-9-bg);color:var(--k-9)}
 .pill[data-state="mix"]{background:var(--k-mix-bg);color:var(--k-mix)}
 .pill[data-state="danger"]{background:var(--k-danger-bg);color:var(--k-danger)}
@@ -107,11 +109,14 @@ h2{font-size:1.4rem;margin-bottom:.9rem}
 .ribbon-empty{font-size:.8rem;color:var(--muted);padding:.4rem 0}
 .bar{flex:1 1 0;min-width:2px;border-radius:1px;background:var(--k-none)}
 .bar[data-state="k12"]{background:var(--k-12)}
+.bar[data-state="maybe"]{background:var(--k-maybe)}
 .bar[data-state="k9"]{background:var(--k-9)}
 .bar[data-state="mix"]{background:var(--k-mix)}
 .bar[data-state="danger"]{background:var(--k-danger)}
 .pills{display:flex;flex-wrap:wrap;gap:.35rem}
 
+.sources{font-size:.75rem;color:var(--muted);margin:.1rem 0 .6rem}
+.spot-meta .wg-link+.wg-link{margin-left:.5rem}
 .legend{display:flex;flex-wrap:wrap;gap:1.1rem;align-items:center;font-size:.85rem;color:var(--muted)}
 .legend .pill{margin-right:.35rem}
 
@@ -173,11 +178,13 @@ footer a{color:var(--accent-ink)}
   </section>
 
   <section class="legend">
-    <span class="pill" data-state="k12">12m</span> 15–20 nds
+    <span class="pill" data-state="maybe">possible</span> ≥1/3 des modèles à 13+ nds (consensus en dessous)
+    <span class="pill" data-state="k12">12m</span> 13–20 nds
     <span class="pill" data-state="mix">12m ou 9m</span> 17–20 nds (recouvrement)
     <span class="pill" data-state="k9">9m</span> 17–30 nds
     <span class="pill" data-state="danger">trop fort</span> &gt;30 nds
-    <span class="pill" data-state="none">pas de vent</span> &lt;15 nds
+    <span class="pill" data-state="none">pas de vent</span> &lt;13 nds
+    <span>Vitesses = médiane des modèles (vent moyen) · survole une barre pour le détail par modèle</span>
   </section>
 
   <section>
@@ -187,7 +194,7 @@ footer a{color:var(--accent-ink)}
   </section>
 
   <footer>
-    Source : Windguru (modèle GFS 13km, wap2.windguru.cz) · spots identifiés depuis
+    Sources agrégées : Windguru (GFS 13km, WRF 9km, WRF 3km, Zephr-HD 2.6km), Open-Meteo (ICON, ECMWF, Météo-France AROME/ARPEGE, UK Met Office) et Windfinder Superforecast (jour J) · spots identifiés depuis
     <a href="https://www.passarokite.com/fr/blog/kite/ou-faire-du-kitesurf-autour-de-lisbonne/" target="_blank" rel="noopener">passarokite.com</a>
     · seuils calibrés pour un rider de 90kg avec un 12m et un 9m — ajuste-les si besoin.
   </footer>
