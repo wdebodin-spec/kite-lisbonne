@@ -9,11 +9,11 @@ N_DAYS = 5  # marge par rapport aux 3 jours de cadence : la GitHub Action tourne
 
 # (windguru id, nom, trajet, lat, lon, slug windfinder)
 SPOTS = [
-    (31, "Guincho", "25 min", 38.730, -9.473, "guincho"),
-    (317, "Fonte da Telha (Costa da Caparica)", "30 min", 38.565, -9.195, "fonte_da_telha"),
-    (185, "Lagoa de Albufeira", "1h00", 38.508, -9.178, "lagoa_de_albufeira"),
-    (829734, "Lagoa de Óbidos", "1h15", 39.418, -9.218, "foz_do_arelho"),
-    (39830, "Baleal - Peniche", "1h20", 39.373, -9.338, "baleal_bay"),
+    (31, "Guincho", "23 min", 38.730, -9.473, "guincho"),
+    (317, "Fonte da Telha (Costa da Caparica)", "25 min", 38.565, -9.195, "fonte_da_telha"),
+    (185, "Lagoa de Albufeira", "36 min", 38.508, -9.178, "lagoa_de_albufeira"),
+    (829734, "Lagoa de Óbidos", "1h23", 39.418, -9.218, "foz_do_arelho"),
+    (39830, "Baleal - Peniche", "1h19", 39.373, -9.338, "baleal_bay"),
 ]
 
 # Sources agrégées : chaque modèle donne un vent moyen par heure, on garde la médiane comme consensus.
@@ -22,7 +22,7 @@ WG_MODELS = [(3, "GFS 13km"), (21, "WRF 9km"), (37, "WRF 3km"), (64, "Zephr-HD 2
 OM_MODELS = [("icon_seamless", "ICON"), ("ecmwf_ifs025", "ECMWF"),
              ("meteofrance_seamless", "Météo-France AROME/ARPEGE"), ("ukmo_seamless", "UK Met Office")]
 MAYBE_SHARE = 1 / 3  # "possible" si au moins 1/3 des modèles voient le 12m ridable alors que la médiane non
-# Temps de trajet voiture, sans trafic, depuis Jardim da Estrela (Lisboa) — calculés via OSRM le 2026-09-04
+# Temps de trajet voiture, sans trafic, depuis Rua Custódio Vieira 1 (Amoreiras, Lisboa) — calculés via OSRM le 2026-10-28
 
 STATE_LABEL = {"maybe": "possible", "k12": "12m", "k9": "9m", "mix": "12m ou 9m", "danger": "trop fort", "none": "pas de vent"}
 
